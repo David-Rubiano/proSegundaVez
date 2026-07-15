@@ -26,6 +26,13 @@ class IRagRepository(ABC):
         contexto estructurado de los documentos más relevantes.
         """
         pass
+    
+    @abstractmethod
+    def retrieve(self, query: str, limit: int = 3) -> List[str]:
+        """
+        Busca y recupera los fragmentos de texto más relevantes para la consulta.
+        """
+        pass
 
 class IMcpToolClient(ABC):
     """

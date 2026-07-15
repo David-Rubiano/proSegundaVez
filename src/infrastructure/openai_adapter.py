@@ -1,5 +1,14 @@
 import os
+import sys
 from langchain_openai import ChatOpenAI
+
+raiz_proyecto = os.path.abspath(os.path.join(os.getcwd()))
+
+#print(f"Raíz del proyecto: {raiz_proyecto}")
+
+if raiz_proyecto not in sys.path:
+    sys.path.append(raiz_proyecto)
+
 from src.domain.ports import ILLMService
 from src.domain.state import AgentState
 

@@ -2,3 +2,11 @@ pydantic
 langchain
 langchain_openai
 langgraph
+pytest
+azure-search-documents
+openai
+mcp
+python-dotenv
+azure-storage-blob
+pypdf
+langchain-text-splitters
