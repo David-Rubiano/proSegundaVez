@@ -10,3 +10,4 @@ python-dotenv
 azure-storage-blob
 pypdf
 langchain-text-splitters
+langchain-mcp-adapters

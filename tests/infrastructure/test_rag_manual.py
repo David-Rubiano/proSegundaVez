@@ -1,8 +1,14 @@
 import os
+import sys
 from dotenv import load_dotenv
 
 # Cargamos las variables de entorno ANTES de importar nada
 load_dotenv()
+
+raiz_proyecto = os.path.abspath(os.path.join(os.getcwd()))
+
+if raiz_proyecto not in sys.path:
+    sys.path.append(raiz_proyecto)
 
 # Importamos tu adaptador de la capa de Infraestructura
 from src.infrastructure.azure_rag_repository import AzureRAGRepository
@@ -16,7 +22,7 @@ def probar_rag_manualmente():
         print("✅ Adaptador RAG instanciado correctamente.")
 
         # 2. Definimos una pregunta de prueba
-        pregunta_usuario = "¿Cuáles son las políticas de vacaciones de la empresa?"
+        pregunta_usuario = "¿Mejores empleos de IA en Colombia?"
         print(f"Buscando contexto para: '{pregunta_usuario}'")
 
         # 3. Llamamos al método que busca en Azure AI Search

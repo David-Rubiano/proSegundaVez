@@ -46,6 +46,10 @@ class AzureRAGRepository(IRagRepository):
             model=self.embedding_model
         )
         return response.data[0].embedding
+    
+    def retrieve_context(self, query: str) -> str:
+        fragmentos = self.retrieve(query=query, limit=3)
+        return "\n\n---\n\n".join(fragmentos)
 
     def retrieve(self, query: str, limit: int = 3) -> List[str]:
         """

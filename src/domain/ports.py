@@ -44,3 +44,6 @@ class IMcpToolClient(ABC):
         Ejecuta una herramienta remota y devuelve el resultado.
         """
         pass
+    @abstractmethod
+    async def list_tools(self):
+        pass
