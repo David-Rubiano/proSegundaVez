@@ -2,6 +2,8 @@ import os
 import sys
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage
+from langchain.agents import create_agent
+from langchain_mcp_adapters.client import MultiServerMCPClient
 
 raiz_proyecto = os.path.abspath(os.path.join(os.getcwd()))
 
@@ -22,13 +24,41 @@ class OpenAIAdapter(ILLMService):
     def __init__(self, model_name: str = "gpt-4o-mini"):
         # Inicializamos el cliente de OpenAI. 
         # La API Key se lee automáticamente de las variables de entorno.
-        self.llm = ChatOpenAI(
+
+        self.model_name = model_name
+
+        self.chat_model = ChatOpenAI(
             model=model_name,
             temperature=0.0 # Usamos 0.0 para que el agente sea determinista y lógico, no creativo
         )
 
+        self.agent = None
 
-    def generate_response(self, state: AgentState) -> dict:
+    async def initialize(self):
+        """
+        Inicializa el agente de LangChain y carga automáticamente
+        las herramientas publicadas por el servidor MCP.
+        """
+
+        client = MultiServerMCPClient(
+            {
+                "sqlserver": {
+                    "transport": "streamable_http",
+                    "url": os.getenv("MCP_SERVER_URL")
+                }
+            }
+        )
+
+        tools = await client.get_tools()
+
+        print(f"✅ Herramientas MCP cargadas: {[t.name for t in tools]}")
+
+        self.agent = create_agent(
+            model=self.chat_model,
+            tools=tools
+        )
+
+    async def generate_response(self, state: AgentState) -> dict:
 
         messages = list(state.messages)
 
@@ -49,8 +79,15 @@ class OpenAIAdapter(ILLMService):
                                 )
                             )
 
-        response = self.llm.invoke(messages)
+        original = len(messages)
+        result = await self.agent.ainvoke(
+            {
+                "messages": messages
+            }
+        )
+        
+        new_messages = result["messages"][original:]
 
         return {
-            "messages": [response]
+            "messages": new_messages
         }

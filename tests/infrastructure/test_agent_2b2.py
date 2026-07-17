@@ -26,20 +26,16 @@ async def run_agent_test():
     try:
         # Paso A: Inicializar Infraestructura
         print("🔌 Conectando adaptadores (OpenAI, RAG, MCP)...")
-        llm_adapter = OpenAIAdapter(
-            mcp_client=mcp_adapter
-        )
-        rag_adapter = AzureRAGRepository()
-        mcp_adapter = AzureMcpAdapter()
+        llm_adapter = OpenAIAdapter()
+        await llm_adapter.initialize()
+        rag_adapter = AzureRAGRepository()        
         
-        await mcp_adapter.initialize()
 
         # Paso B: Inyección de Dependencias
         print("🧠 Ensamblando el cerebro (LangGraph)...")
         orchestrator = AgentOrchestratorUseCase(
             llm_service=llm_adapter,
-            rag_repository=rag_adapter,
-            mcp_client=mcp_adapter
+            rag_repository=rag_adapter            
         )
 
         
@@ -51,7 +47,7 @@ async def run_agent_test():
 
         # Paso C: Crear el Estado Inicial (El vehículo de datos)
         # Haremos una pregunta que obligue al agente a pensar, buscar y actuar
-        pregunta_usuario = "¿Consulta 5 SalesLT.Customer de la base de datos?"
+        pregunta_usuario = "¿Consulta 1 SalesLT.Customer de la base de datos?"
         
         estado_inicial = AgentState(
             messages=[HumanMessage(content=pregunta_usuario)]

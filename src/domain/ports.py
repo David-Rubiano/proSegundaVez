@@ -8,7 +8,7 @@ class ILLMService(ABC): # ENCHUFE (Interfaz) para cualquier Modelo de Lenguaje
     El agente usará esto sin importar si debajo hay OpenAI, Anthropic o Llama.
     """
     @abstractmethod
-    def generate_response(self, state: AgentState) -> AgentState:
+    async def generate_response(self, state: AgentState) -> dict:
         """
         Toma el estado actual del agente, procesa el razonamiento y 
         devuelve el estado actualizado con la nueva respuesta.
