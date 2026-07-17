@@ -14,6 +14,7 @@ from src.api import dependencies
 from src.infrastructure.openai_adapter import OpenAIAdapter
 from src.infrastructure.azure_rag_repository import AzureRAGRepository
 from src.use_cases.agent_orchestrator_use_case import AgentOrchestratorUseCase
+from src.graph.graph_builder import GraphBuilder
 
 load_dotenv()
 
@@ -43,7 +44,11 @@ async def lifespan(app: FastAPI):
     )
     print("Agente listo.")
 
-    dependencies.graph = dependencies.orchestrator.compile_graph()
+    builder = GraphBuilder(
+        dependencies.orchestrator
+    )
+
+    dependencies.graph = builder.compile_graph()
 
     print("Grafo compilado")
 
